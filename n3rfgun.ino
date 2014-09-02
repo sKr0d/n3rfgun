@@ -9,9 +9,10 @@
  *  sending the dart into the already running ACT motors.
  *  When ARM pin goes from LOW to HIGH (gun just fired) then also start
  *  the gunfire animation.
+ *  https://github.com/sKr0d/n3rfgun
  */
 
-int numpix = 6; // number of pixels
+int numpix = 6; // number of pixels in the chain
 
 #include <Adafruit_NeoPixel.h>
 #ifdef __AVR_ATtiny85__ // Trinket, Gemma, etc.
@@ -20,15 +21,15 @@ int numpix = 6; // number of pixels
 #define PIN 2
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numpix, PIN, NEO_GRB + NEO_KHZ800);
 
-int TRG = 4; // trigger pin
-int ARM = 3; // armed pin
-int ACT = 0; // action pin
-int LOD = 1; // loader pin
-int NEO = 2; // neopixel pin
+int TRG = 4;   // trigger pin
+int ARM = 3;   // armed pin
+int ACT = 0;   // action pin
+int LOD = 1;   // loader pin
+int NEO = 2;   // neopixel pin
 
-int ACTS = 0; // action speeed
+int ACTS = 0;   // action speeed
 int LODS = 240; // loader speed
-int REL = 0; //release speed button
+int REL = 0;   //release speed button
 
 int i = 0;
 int k = 0;
@@ -54,16 +55,16 @@ void arm() {
   if (digitalRead(ARM) == LOW && REL == 1) {
     switch (ACTS) {
       case 0:
-        ACTS = 128;
+        ACTS = 128; // 50%
         break;
       case 128:
-        ACTS = 192;
+        ACTS = 192; // 75%
         break;
       case 192:
-        ACTS = 255;
+        ACTS = 255; // 100%
         break;
       default:
-        ACTS = 0;
+        ACTS = 0;   // 0%
       break;
     }
     analogWrite(ACT, ACTS);
@@ -76,7 +77,7 @@ void arm() {
   }
 }
 
-void trig() {
+void trig() { // check for press of trigger button
     if (digitalRead(TRG) == LOW) {
      analogWrite(LOD, LODS);
      fire();
@@ -84,7 +85,7 @@ void trig() {
    }
 }
 
-void rainbow(uint8_t wait) {
+void rainbow(uint8_t wait) { // make pretty rainbow colors
   uint16_t i, j;
 
   for(j=0; j<256; j=j+4) {
